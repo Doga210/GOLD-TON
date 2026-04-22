@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOLD TON | Matrix Platform</title>
+<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --g:#c9a227;--g2:#e8c547;
+  --bg:#07080f;--bg2:#0d0f1a;
+  --txt:#f0e8d0;--dim:#6b5f3a;--soft:#9a8555;
+  --grn:#00c896;--blu:#4ea8f5;
+  --brd:rgba(201,162,39,0.15);
+}
+body{background:var(--bg);color:var(--txt);font-family:'Cairo',sans-serif;min-height:100vh;overflow-x:hidden;}
+.bg-fx{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 700px 500px at 15% 10%,rgba(201,162,39,.05) 0%,transparent 60%),
+             radial-gradient(ellipse 500px 400px at 85% 80%,rgba(78,168,245,.04) 0%,transparent 60%);}
+.grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(201,162,39,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,162,39,.03) 1px,transparent 1px);
+  background-size:52px 52px;mask-image:radial-gradient(ellipse at center,black 10%,transparent 78%);}
+.wrap{max-width:520px;margin:0 auto;padding:0 14px 100px;position:relative;z-index:1;}
+
+/* TOP BAR */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 0 12px;}
+.topbar-logo{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--g2);}
+.topbar-logo span{color:var(--txt);}
+#ton-connect-btn{display:flex;}
+
+/* PROFILE */
+.profile-card{background:linear-gradient(135deg,#0f1628,#0a0d1e);border:1px solid rgba(78,168,245,.22);
+  border-radius:20px;padding:18px 20px;margin-bottom:10px;display:flex;align-items:center;gap:16px;}
+.avatar{width:62px;height:62px;border-radius:50%;border:2px solid var(--g);
+  background:linear-gradient(135deg,#c9a227,#7a5205);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',monospace;font-size:14px;font-weight:900;color:#f5d76e;flex-shrink:0;
+  box-shadow:0 0 22px rgba(201,162,39,.3);}
+.profile-name{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--g2);margin-bottom:4px;}
+.profile-ids{font-size:11px;color:var(--soft);}
+.profile-ids span{color:var(--blu);}
+.profile-lvl{margin-top:7px;display:inline-flex;align-items:center;gap:5px;
+  background:rgba(201,162,39,.1);border:1px solid rgba(201,162,39,.2);
+  border-radius:999px;padding:3px 12px;font-size:9px;font-weight:700;color:var(--g2);}
+
+/* REF CARD */
+.ref-card{background:linear-gradient(135deg,rgba(78,168,245,.1),rgba(78,168,245,.05));
+  border:1px solid rgba(78,168,245,.25);border-radius:16px;padding:14px 18px;
+  margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;}
+.ref-card-l{display:flex;align-items:center;gap:10px;}
+.ref-text{font-size:12px;font-weight:700;color:var(--blu);}
+.ref-sub{font-size:9px;color:rgba(78,168,245,.6);margin-top:2px;}
+.ref-copy{background:rgba(78,168,245,.15);border:1px solid rgba(78,168,245,.3);
+  color:var(--blu);padding:7px 14px;border-radius:10px;font-family:'Cairo',sans-serif;
+  font-size:10px;font-weight:900;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+
+/* GRID 2 */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+
+/* PCARD */
+.pcard{border-radius:18px;padding:18px 16px;position:relative;overflow:hidden;}
+.pcard.dark{background:linear-gradient(135deg,#0c1022,#080c18);border:1px solid rgba(255,255,255,.07);}
+.pcard.gold-bd{border-color:rgba(201,162,39,.25)!important;}
+.pcard.grn-bd{border-color:rgba(0,200,150,.25)!important;}
+.pcard-hd{display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+.pcard-ico{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.pcard-ico.g{background:rgba(201,162,39,.2);}
+.pcard-ico.grn{background:rgba(0,200,150,.2);}
+.pcard-ico.blu{background:rgba(78,168,245,.2);}
+.pcard-title{font-size:10px;font-weight:700;color:var(--soft);}
+.pcard-val{font-family:'Orbitron',monospace;font-size:24px;font-weight:900;line-height:1;}
+.pcard-val.gold{color:var(--g2);}
+.pcard-val.grn{color:var(--grn);}
+.pcard-val.blu{color:var(--blu);}
+.pcard-note{font-size:8px;color:var(--dim);margin-top:5px;}
+.pcard-btn{margin-top:12px;width:100%;padding:8px;border-radius:9px;border:none;cursor:pointer;
+  font-family:'Cairo',sans-serif;font-weight:900;font-size:9px;transition:all .2s;}
+.pcard-btn.grn-btn{background:rgba(0,200,150,.12);color:var(--grn);border:1px solid rgba(0,200,150,.25);}
+.pcard-btn.gold-btn{background:rgba(201,162,39,.12);color:var(--g2);border:1px solid rgba(201,162,39,.25);}
+.pcard-btn:hover{filter:brightness(1.2);}
+
+/* TEAM CARDS */
+.tcard{background:linear-gradient(135deg,#0e1f3a,#081428);border:1px solid rgba(78,168,245,.28);border-radius:18px;padding:18px 16px;}
+.tcard-hd{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.tcard-title{font-size:10px;font-weight:700;color:rgba(78,168,245,.8);}
+.tcard-val{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:white;}
+
+/* UPGRADE BALANCE */
+.upg-card{background:linear-gradient(135deg,#12100a,#0a0800);border:1px solid rgba(201,162,39,.28);
+  border-radius:18px;padding:18px 20px;margin-bottom:10px;}
+.upg-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.upg-title{font-size:10px;font-weight:700;color:var(--soft);}
+.upg-badge{background:rgba(201,162,39,.12);border:1px solid rgba(201,162,39,.2);
+  border-radius:999px;padding:3px 10px;font-size:8px;color:var(--g);font-weight:700;}
+.upg-val{font-family:'Orbitron',monospace;font-size:30px;font-weight:900;color:var(--g2);margin-bottom:2px;}
+.upg-ton{font-size:9px;color:var(--dim);}
+.upg-bar{margin-top:12px;height:4px;background:rgba(255,255,255,.05);border-radius:99px;overflow:hidden;}
+.upg-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--g2));border-radius:99px;width:0%;transition:width 1s;}
+.upg-info{font-size:9px;color:var(--dim);margin-top:6px;}
+.upg-info span{color:var(--g);font-weight:700;}
+
+/* SECTION HEADER */
+.sec-h{display:flex;align-items:center;gap:10px;margin:20px 0 12px;}
+.sec-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(201,162,39,.15),transparent);}
+.sec-t{font-family:'Orbitron',monospace;font-size:8px;font-weight:700;color:var(--dim);
+  text-transform:uppercase;letter-spacing:3px;white-space:nowrap;}
+
+/* LEVELS */
+.lgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+@media(max-width:380px){.lgrid{grid-template-columns:repeat(3,1fr);}}
+.lv{border-radius:13px;padding:12px 7px;text-align:center;transition:all .3s;position:relative;overflow:hidden;cursor:pointer;}
+.lv.off{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);}
+.lv.off:hover{transform:translateY(-3px);border-color:rgba(201,162,39,.3);background:rgba(201,162,39,.04);}
+.lv.on{background:rgba(0,200,150,.06);border:1px solid rgba(0,200,150,.28);}
+.lv.on::after{content:'✓';position:absolute;top:4px;right:5px;font-size:8px;color:var(--grn);font-weight:900;}
+.lv-n{font-family:'Orbitron',monospace;font-size:6px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.lv-p{font-family:'Orbitron',monospace;font-size:15px;font-weight:900;}
+.lv-p.oc{color:white;} .lv-p.ac{color:var(--grn);}
+.lv-u{font-size:7px;color:var(--dim);margin:2px 0 5px;}
+.lv-r{font-size:7px;font-weight:700;color:var(--g);margin-bottom:8px;display:block;}
+.lbtns{display:flex;flex-direction:column;gap:4px;}
+.bext{background:rgba(78,168,245,.1);color:var(--blu);border:1px solid rgba(78,168,245,.2);
+  padding:5px 3px;border-radius:7px;width:100%;font-size:6px;font-weight:900;cursor:pointer;font-family:'Cairo',sans-serif;}
+.bint{background:rgba(201,162,39,.08);color:var(--g2);border:1px solid rgba(201,162,39,.2);
+  padding:5px 3px;border-radius:7px;width:100%;font-size:6px;font-weight:900;cursor:pointer;font-family:'Cairo',sans-serif;}
+.bext:hover{background:rgba(78,168,245,.2);} .bint:hover{background:rgba(201,162,39,.18);}
+.on-badge{color:var(--grn);font-size:8px;font-weight:900;}
+
+/* HOW */
+.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.hcard{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:18px 14px;text-align:center;}
+.hnum{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;color:rgba(201,162,39,.1);margin-bottom:8px;}
+.hico{font-size:22px;margin-bottom:7px;}
+.htxt{font-size:11px;font-weight:700;margin-bottom:5px;}
+.hdesc{font-size:9px;color:var(--soft);line-height:1.7;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(7,8,15,.96);backdrop-filter:blur(20px);
+  border-top:1px solid rgba(201,162,39,.12);
+  display:flex;justify-content:space-around;align-items:center;padding:10px 0 14px;}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;
+  color:var(--dim);font-size:9px;font-weight:700;transition:all .2s;padding:0 8px;}
+.bnav-item.active{color:var(--g2);}
+.bnav-item .ico{font-size:20px;}
+.bnav-main{background:linear-gradient(135deg,var(--g2),var(--g));border-radius:50%;
+  width:48px;height:48px;display:flex;align-items:center;justify-content:center;font-size:20px;
+  box-shadow:0 4px 18px rgba(201,162,39,.4);}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.88);
+  backdrop-filter:blur(10px);justify-content:center;align-items:center;}
+.modal.open{display:flex;}
+.mbox{background:linear-gradient(135deg,#0c0f1e,#070910);border:1px solid rgba(201,162,39,.2);
+  border-radius:24px;padding:30px;max-width:340px;width:92%;text-align:center;position:relative;}
+.mbox::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--g2),transparent);}
+.mico{font-size:40px;margin-bottom:10px;}
+.mt{font-family:'Orbitron',monospace;font-size:14px;font-weight:700;margin-bottom:6px;}
+.md{font-size:11px;color:var(--soft);margin-bottom:14px;line-height:1.7;}
+.mv{font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:var(--g2);margin-bottom:4px;}
+.mv2{font-size:10px;color:var(--soft);margin-bottom:20px;}
+.mbtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.mc{background:linear-gradient(135deg,var(--g2),var(--g),#92680a);color:#000;border:none;
+  padding:10px 20px;border-radius:10px;font-weight:900;font-size:11px;cursor:pointer;font-family:'Cairo',sans-serif;}
+.mc.g{background:linear-gradient(135deg,var(--grn),#009f78);}
+.mx{background:rgba(255,255,255,.05);color:var(--soft);border:1px solid rgba(255,255,255,.08);
+  padding:10px 18px;border-radius:10px;font-weight:700;font-size:11px;cursor:pointer;font-family:'Cairo',sans-serif;}
+.wd-note{background:rgba(201,162,39,.06);border:1px solid rgba(201,162,39,.2);
+  border-radius:10px;padding:10px;font-size:10px;color:var(--soft);margin-bottom:16px;line-height:1.6;text-align:right;}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:linear-gradient(135deg,#0f1220,#0a0d18);border:1px solid rgba(201,162,39,.2);
+  color:var(--txt);padding:12px 22px;border-radius:12px;font-size:11px;font-weight:700;
+  z-index:9999;transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  pointer-events:none;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.5);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:rgba(201,162,39,.1);border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+<div class="grid-bg"></div>
+<div class="wrap">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">GOLD <span>TON</span></div>
+  <div id="ton-connect-btn"></div>
+</div>
+
+<!-- BANNER -->
+<div style="margin-bottom:12px;border-radius:20px;overflow:hidden;border:1px solid rgba(201,162,39,0.2);box-shadow:0 0 40px rgba(201,162,39,0.15);background:linear-gradient(135deg,#0a0800,#1a1200);text-align:center;padding:28px 20px;">
+  <div style="font-family:'Orbitron',monospace;font-size:32px;font-weight:900;background:linear-gradient(160deg,#fff 0%,#f5d76e 35%,#c9a227 65%,#92680a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;">GOLD TON</div>
+  <div style="font-size:10px;color:#6b5f3a;letter-spacing:4px;text-transform:uppercase;">Decentralized Matrix Platform • TON Blockchain</div>
+  <div style="margin-top:16px;display:inline-flex;align-items:center;gap:8px;background:rgba(0,200,150,.08);border:1px solid rgba(0,200,150,.2);border-radius:999px;padding:6px 18px;font-size:10px;font-weight:700;color:#00c896;">
+    <span style="width:6px;height:6px;background:#00c896;border-radius:50%;display:inline-block;animation:pulse 1.8s infinite;"></span>
+    المنصة نشطة الآن
+  </div>
+</div>
+<!-- PROFILE -->
+<div class="profile-card">
+  <div class="avatar">GT</div>
+  <div>
+    <div class="profile-name" id="p-name">GOLD TON</div>
+    <div class="profile-ids">ID <span id="p-id">------</span> | Upline ID <span id="p-up">------</span></div>
+    <div class="profile-lvl">⭐ المستوى: <span id="p-lvl">0</span></div>
+  </div>
+</div>
+
+<!-- REFERRAL LINK -->
+<div class="ref-card" onclick="cpRef()">
+  <div class="ref-card-l">
+    <div style="font-size:20px;">🔗</div>
+    <div>
+      <div class="ref-text">رابط الإحالة الخاص بك</div>
+      <div class="ref-sub">كل إحالة = 0.2 TON تُضاف لرصيد الترقية</div>
+    </div>
+  </div>
+  <button class="ref-copy">نسخ 📋</button>
+</div>
+<input type="text" id="ref-link-hidden" style="position:absolute;opacity:0;pointer-events:none;">
+
+<!-- أرباح + رصيد الإحالة -->
+<div class="grid2">
+  <div class="pcard dark grn-bd">
+    <div class="pcard-hd"><div class="pcard-ico grn">💰</div><div class="pcard-title">أرباح الترقيات</div></div>
+    <div class="pcard-val grn" id="b-earn">0.0000</div>
+    <div class="pcard-note">TON — قابل للسحب</div>
+    <button class="pcard-btn grn-btn" onclick="reqWithdraw()">سحب الأرباح ↗</button>
+  </div>
+  <div class="pcard dark gold-bd">
+    <div class="pcard-hd"><div class="pcard-ico g">🎁</div><div class="pcard-title">رصيد الترقية</div></div>
+    <div class="pcard-val gold" id="b-ref">0.0000</div>
+    <div class="pcard-note">TON — من الإحالات</div>
+    <button class="pcard-btn gold-btn" onclick="document.getElementById('matrix').scrollIntoView({behavior:'smooth'})">استخدام ↗</button>
+  </div>
+</div>
+
+<!-- شركاء + فريق -->
+<div class="grid2">
+  <div class="tcard">
+    <div class="tcard-hd"><div style="font-size:16px;">👥</div><div class="tcard-title">شركائي المباشرون</div></div>
+    <div class="tcard-val" id="b-partners">0</div>
+  </div>
+  <div class="tcard">
+    <div class="tcard-hd"><div style="font-size:16px;">🌐</div><div class="tcard-title">إجمالي الأعضاء</div></div>
+    <div class="tcard-val" id="st-m">0</div>
+  </div>
+</div>
+
+<!-- رصيد الترقية التراكمي -->
+<div style="margin-top:10px;">
+<div class="upg-card">
+  <div class="upg-hd">
+    <div class="upg-title">رصيد الترقية التراكمي</div>
+    <div class="upg-badge">0.2 TON / إحالة</div>
+  </div>
+  <div class="upg-val" id="upg-val">0.0000</div>
+  <div class="upg-ton">TON متاح للترقية</div>
+  <div class="upg-bar"><div class="upg-fill" id="upg-fill"></div></div>
+  <div class="upg-info">المستوى التالي: <span id="next-price">1 TON</span> — تحتاج <span id="need-more">1.0000</span> TON إضافية</div>
+</div>
+</div>
+
+<!-- MATRIX LEVELS -->
+<div class="sec-h" id="matrix"><div class="sec-t">مصفوفة المستويات</div><div class="sec-line"></div></div>
+<div class="lgrid" id="lgrid"></div>
+
+<!-- HOW IT WORKS -->
+<div class="sec-h" style="margin-top:24px;"><div class="sec-t">كيف يعمل</div><div class="sec-line"></div></div>
+<div class="how-grid">
+  <div class="hcard"><div class="hnum">01</div><div class="hico">🔗</div><div class="htxt">ربط المحفظة</div><div class="hdesc">وصّل محفظة TON وادخل المنصة مجاناً بدون أي رسوم.</div></div>
+  <div class="hcard"><div class="hnum">02</div><div class="hico">🎁</div><div class="htxt">أحل أصدقاءك</div><div class="hdesc">كل إحالة تضيف 0.2 TON لرصيد الترقية تلقائياً.</div></div>
+  <div class="hcard"><div class="hnum">03</div><div class="hico">🚀</div><div class="htxt">فعّل المستويات</div><div class="hdesc">استخدم رصيد الإحالة أو محفظتك للترقية.</div></div>
+  <div class="hcard"><div class="hnum">04</div><div class="hico">💰</div><div class="htxt">اكسب واسحب</div><div class="hdesc">50% من كل ترقية في فريقك تصلك مباشرة.</div></div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bnav-item active">
+    <div class="ico">🏠</div><div>الرئيسية</div>
+  </div>
+  <div class="bnav-item" onclick="document.getElementById('matrix').scrollIntoView({behavior:'smooth'})">
+    <div class="ico">🚀</div><div>المستويات</div>
+  </div>
+  <div class="bnav-item">
+    <div class="bnav-main">🪙</div>
+  </div>
+  <div class="bnav-item" onclick="cpRef()">
+    <div class="ico">🔗</div><div>إحالة</div>
+  </div>
+  <div class="bnav-item" onclick="reqWithdraw()">
+    <div class="ico">💳</div><div>السحب</div>
+  </div>
+</div>
+
+<!-- MODAL UPGRADE -->
+<div class="modal" id="m-upg">
+  <div class="mbox">
+    <div class="mico">🚀</div>
+    <div class="mt">تفعيل المستوى <span id="mu-lvl" style="color:var(--g2);"></span></div>
+    <div class="md">اختر طريقة الدفع — 50% من المبلغ يذهب لمحيلك فوراً</div>
+    <div class="mv"><span id="mu-price">0</span> <span style="font-size:13px;color:var(--dim);">TON</span></div>
+    <div class="mv2">ربح محيلك: <span id="mu-profit" style="color:var(--grn);font-weight:700;"></span> TON</div>
+    <div class="mbtns">
+      <button class="mc" onclick="doUpgExt()">💳 من المحفظة</button>
+      <button class="mc g" onclick="doUpgInt()">🎁 من رصيد الإحالة</button>
+      <button class="mx" onclick="closeM('m-upg')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL WITHDRAW -->
+<div class="modal" id="m-wd">
+  <div class="mbox">
+    <div class="mico">💸</div>
+    <div class="mt">سحب الأرباح</div>
+    <div class="wd-note">
+      ⚠️ <strong style="color:var(--g2);">رصيد الإحالة لا يُسحب</strong> — مخصص للترقية فقط.<br>
+      يمكنك سحب <strong>أرباح الترقيات</strong> فقط.
+    </div>
+    <div class="mv" id="mw-a">0.0000</div>
+    <div class="mv2">TON — سيُرسل لمحفظتك خلال 24 ساعة</div>
+    <div class="mbtns">
+      <button class="mc g" onclick="confWd()">تأكيد السحب</button>
+      <button class="mx" onclick="closeM('m-wd')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const FC={apiKey:"AIzaSyA4oGEMOmaraubqk8oSJBsrU2rM_umlc24",authDomain:"ff-fortone.firebaseapp.com",databaseURL:"https://ff-fortone-default-rtdb.firebaseio.com",projectId:"ff-fortone",storageBucket:"ff-fortone.firebasestorage.app",messagingSenderId:"890615410300",appId:"1:890615410300:web:5659f914f69c916488a3f9"};
+firebase.initializeApp(FC);
+const db=firebase.database();
+const DEST="UQBufh6lLHE5H1NDJXQwRIVCX-t4iKHyyoXD0Spm8N9navPx";
+const PRICES=[0,1,2,4,6,8,10,12,14,16,18,20,30,40,60,80,100,120,140,160,180];
+const REF_BONUS=0.2;
+const TK="8767401640:AAHc8liXwIt8Ck_w9xYqPDuyqxcIn7Qslbk";
+const TC="7871311618";
+let addr=null,userData=null,pendingLvl=null,pendingPrice=null;
+const urlRef=new URLSearchParams(location.search).get('ref')||"555497";
+
+function toast(m,d=3200){const t=document.getElementById('toast');t.innerText=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d);}
+function openM(id){document.getElementById(id).classList.add('open');}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+async function tg(m){try{await fetch(`https://api.telegram.org/bot${TK}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TC,text:m,parse_mode:'HTML'})});}catch(e){}}
+
+// TON CONNECT
+const tonUI=new TON_CONNECT_UI.TonConnectUI({manifestUrl:'https://forgazzaton.vercel.app/tonconnect-manifest.json',buttonRootId:'ton-connect-btn'});
+tonUI.onStatusChange(async w=>{if(w){addr=w.account.address;await syncUser(addr);listenUser(addr);}});
+
+async function syncUser(a){
+  const s=await db.ref('users/'+a).once('value');
+  if(!s.exists()){
+    const id=Math.floor(Math.random()*899999+100000);
+    await db.ref('users/'+a).set({myId:id,upline:String(urlRef),level:0,earnings:0,upgradeBalance:0,wallet:a,pendingWithdraw:0});
+    // أضف 0.2 TON لرصيد ترقية المحيل
+    await addToField(String(urlRef),'upgradeBalance',REF_BONUS);
+    await tg(`🆕 <b>عضو جديد GOLD TON!</b>\n🆔 #${id}\n🔗 Upline: #${urlRef}\n💼 <code>${a}</code>\n🎁 أُضيف ${REF_BONUS} TON لرصيد ترقية المحيل`);
+    loadGlobalStats();
+  }
+}
+
+function listenUser(a){
+  db.ref('users/'+a).on('value',s=>{
+    const d=s.val();if(!d)return;
+    userData=d;
+    document.getElementById('p-id').innerText='#'+d.myId;
+    document.getElementById('p-up').innerText='#'+d.upline;
+    document.getElementById('p-lvl').innerText=d.level||0;
+    const earn=parseFloat(d.earnings||0);
+    const refBal=parseFloat(d.upgradeBalance||0);
+    document.getElementById('b-earn').innerText=earn.toFixed(4);
+    document.getElementById('b-ref').innerText=refBal.toFixed(4);
+    document.getElementById('upg-val').innerText=refBal.toFixed(4);
+    // progress bar
+    const lvl=d.level||0;
+    const nextIdx=Math.min(lvl+1,PRICES.length-1);
+    const nextPrice=PRICES[nextIdx];
+    const pct=nextPrice>0?Math.min((refBal/nextPrice)*100,100):100;
+    document.getElementById('upg-fill').style.width=pct+'%';
+    document.getElementById('next-price').innerText=nextPrice+' TON';
+    document.getElementById('need-more').innerText=Math.max(nextPrice-refBal,0).toFixed(4);
+    // ref link
+    document.getElementById('ref-link-hidden').value=location.origin+location.pathname+'?ref='+d.myId;
+    renderLevels(lvl,a);
+    loadPartners(d.myId);
+  });
+}
+
+function loadGlobalStats(){
+  db.ref('users').once('value',s=>document.getElementById('st-m').innerText=s.numChildren());
+}
+loadGlobalStats();
+setInterval(loadGlobalStats,30000);
+
+function loadPartners(myId){
+  db.ref('users').orderByChild('upline').equalTo(String(myId)).on('value',s=>{
+    document.getElementById('b-partners').innerText=s.numChildren();
+  });
+}
+
+async function addToField(myId,field,amount){
+  if(!myId||amount<=0)return;
+  let q=await db.ref('users').orderByChild('myId').equalTo(Number(myId)).once('value');
+  if(!q.exists())q=await db.ref('users').orderByChild('myId').equalTo(String(myId)).once('value');
+  if(!q.exists())return;
+  const k=Object.keys(q.val())[0];
+  const cur=parseFloat(q.val()[k][field]||0);
+  await db.ref(`users/${k}/${field}`).set(parseFloat((cur+amount).toFixed(4)));
+  return{key:k,data:q.val()[k]};
+}
+
+function renderLevels(lvl,a){
+  const g=document.getElementById('lgrid');g.innerHTML='';
+  for(let i=1;i<PRICES.length;i++){
+    const on=i<=lvl,pr=PRICES[i],profit=(pr*0.5).toFixed(pr>=10?0:2);
+    const d=document.createElement('div');d.className='lv '+(on?'on':'off');
+    if(on){
+      d.innerHTML=`<div class="lv-n">LVL ${i}</div><div class="lv-p ac">${pr}</div><div class="lv-u">TON</div><span class="lv-r">+${profit} TON</span><div class="on-badge">✅ مفعّل</div>`;
+    }else{
+      d.innerHTML=`<div class="lv-n">LVL ${i}</div><div class="lv-p oc">${pr}</div><div class="lv-u">TON</div><span class="lv-r">ربح: ${profit} TON</span><div class="lbtns"><button class="bext" onclick="openUpg(${i},${pr})">💳 محفظة</button><button class="bint" onclick="openUpgInt(${i},${pr})">🎁 رصيد</button></div>`;
+    }
+    g.appendChild(d);
+  }
+}
+
+function openUpg(lvl,price){
+  if(!addr)return toast('⚠️ وصّل محفظتك أولاً');
+  if(!userData)return toast('⚠️ جاري التحميل...');
+  if(lvl!==(userData.level||0)+1)return toast(`⚠️ الترقية بالترتيب! التالي: المستوى ${(userData.level||0)+1}`);
+  pendingLvl=lvl;pendingPrice=price;
+  document.getElementById('mu-lvl').innerText=lvl;
+  document.getElementById('mu-price').innerText=price;
+  document.getElementById('mu-profit').innerText=(price*0.5).toFixed(4);
+  openM('m-upg');
+}
+function openUpgInt(lvl,price){openUpg(lvl,price);}
+
+async function doUpgExt(){
+  closeM('m-upg');
+  if(!pendingLvl)return;
+  const lvl=pendingLvl,price=pendingPrice;
+  try{
+    const nano=(BigInt(Math.floor(price*1e9))).toString();
+    const tx=await tonUI.sendTransaction({validUntil:Math.floor(Date.now()/1000)+120,messages:[{address:DEST,amount:nano}]});
+    if(tx){await finalizeUpg(lvl,price,'external');toast(`✅ المستوى ${lvl} مفعّل!`);}
+  }catch(e){toast('❌ '+(e.message||'فشلت المعاملة'));}
+}
+
+async function doUpgInt(){
+  closeM('m-upg');
+  if(!pendingLvl||!userData)return;
+  const lvl=pendingLvl,price=pendingPrice;
+  const bal=parseFloat(userData.upgradeBalance||0);
+  if(bal<price)return toast(`❌ رصيد غير كافٍ — لديك ${bal.toFixed(4)} من ${price} TON`);
+  await db.ref(`users/${addr}/upgradeBalance`).set(parseFloat((bal-price).toFixed(4)));
+  await finalizeUpg(lvl,price,'internal');
+  toast(`✅ تم تفعيل المستوى ${lvl} من رصيد الإحالة!`);
+}
+
+async function finalizeUpg(lvl,price,type){
+  await db.ref(`users/${addr}/level`).set(lvl);
+  await db.ref('transactions').push({user:addr,level:lvl,price,type,ts:Date.now()});
+  const d=userData;
+  const profit=parseFloat((price*0.5).toFixed(4));
+  // 50% أرباح للمحيل (في earnings — قابلة للسحب)
+  if(d?.upline){
+    let q=await db.ref('users').orderByChild('myId').equalTo(Number(d.upline)).once('value');
+    if(!q.exists())q=await db.ref('users').orderByChild('myId').equalTo(String(d.upline)).once('value');
+    if(q.exists()){
+      const uk=Object.keys(q.val())[0];
+      const ud=q.val()[uk];
+      if((ud.level||0)>=lvl){
+        const cur=parseFloat(ud.earnings||0);
+        await db.ref(`users/${uk}/earnings`).set(parseFloat((cur+profit).toFixed(4)));
+        await tg(`💰 <b>ربح ترقية — GOLD TON</b>\n👤 المحيل: #${ud.myId} | LVL ${ud.level}\n💵 +${profit} TON\n💼 <code>${uk}</code>`);
+      }
+    }
+  }
+  const ta=type==='external'?'💳 محفظة':'🎁 رصيد إحالة';
+  await tg(`🚀 <b>ترقية — GOLD TON</b>\n👤 #${d?.myId} → LVL ${lvl}\n💰 ${price} TON ${ta}\n💼 <code>${addr}</code>`);
+  loadGlobalStats();
+}
+
+function reqWithdraw(){
+  if(!addr)return toast('⚠️ وصّل محفظتك أولاً');
+  const earn=parseFloat(document.getElementById('b-earn').innerText||0);
+  if(earn<1)return toast('⚠️ الحد الأدنى للسحب 1 TON');
+  document.getElementById('mw-a').innerText=earn.toFixed(4);
+  openM('m-wd');
+}
+
+async function confWd(){
+  closeM('m-wd');
+  const a=parseFloat(document.getElementById('mw-a').innerText||0);
+  await db.ref('withdrawRequests').push({user:addr,amount:a,status:'pending',ts:Date.now()});
+  await db.ref(`users/${addr}`).update({earnings:0,pendingWithdraw:a});
+  await tg(`💸 <b>طلب سحب — GOLD TON</b>\n🆔 #${userData?.myId} | LVL ${userData?.level}\n💰 ${a.toFixed(4)} TON\n💼 <code>${addr}</code>\n⚠️ أرسل فوراً!`);
+  toast(`✅ طلب السحب أُرسل — ستصلك ${a.toFixed(4)} TON خلال 24 ساعة`);
+}
+
+function cpRef(){
+  const inp=document.getElementById('ref-link-hidden');
+  if(!addr||!inp.value)return toast('⚠️ وصّل محفظتك أولاً');
+  inp.select();document.execCommand('copy');
+  toast('✅ تم نسخ رابط الإحالة!');
+}
+</script>
+</body>
+</html>
