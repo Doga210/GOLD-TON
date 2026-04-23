@@ -9,28 +9,54 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-:root{--gold:#f5c842;--gold2:#ffd700;--gold3:#e6a817;--gold-dk:#92680a;--bg:#03040a;--bg2:#070910;--glass:rgba(245,200,66,0.03);--glass2:rgba(255,255,255,0.02);--bg:rgba(245,200,66,0.15);--brd:rgba(255,255,255,0.06);--txt:#f0e6c8;--dim:#7a6840;--soft:#a89060;--grn:#00d4a0;--red:#ff4567;}
+:root{
+  --gold:#f5c842;--gold2:#ffd700;--gold3:#e6a817;--gold-dk:#92680a;
+  --bg:#020b18;--bg2:#031020;
+  --blue:#1a6fff;--blue2:#0d4fd4;--blue3:#0a3fa8;
+  --glass:rgba(26,111,255,0.06);--glass2:rgba(255,255,255,0.03);
+  --brd:rgba(26,111,255,0.15);--brd-gold:rgba(245,200,66,0.2);
+  --txt:#e8f4ff;--dim:#4a7aaa;--soft:#7aaace;
+  --grn:#00d4a0;--red:#ff4567;
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:#03040a;color:#f0e6c8;font-family:'Cairo',sans-serif;min-height:100vh;overflow-x:hidden;}
-.bg-fx{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 800px 600px at 20% 20%,rgba(245,200,66,0.04) 0%,transparent 60%),radial-gradient(ellipse 600px 400px at 80% 70%,rgba(245,180,10,0.03) 0%,transparent 60%);}
-.grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(245,200,66,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(245,200,66,0.025) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse at center,black 20%,transparent 80%);}
+body{
+  background:#020b18;
+  color:#e8f4ff;
+  font-family:'Cairo',sans-serif;
+  min-height:100vh;overflow-x:hidden;
+}
+.bg-fx{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 900px 700px at 10% 10%, rgba(26,111,255,0.18) 0%,transparent 60%),
+    radial-gradient(ellipse 700px 500px at 90% 80%, rgba(13,79,212,0.15) 0%,transparent 60%),
+    radial-gradient(ellipse 500px 400px at 50% 50%, rgba(245,200,66,0.04) 0%,transparent 60%);
+}
+.grid-bg{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    linear-gradient(rgba(26,111,255,0.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(26,111,255,0.07) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);
+}
 .particles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-.p{position:absolute;width:2px;height:2px;background:#f5c842;border-radius:50%;animation:fl linear infinite;opacity:0;}
-@keyframes fl{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(-10vh);opacity:0;}}
+.p{position:absolute;border-radius:50%;animation:fl linear infinite;opacity:0;}
+@keyframes fl{0%{transform:translateY(100vh);opacity:0;}10%{opacity:.6;}90%{opacity:.2;}100%{transform:translateY(-10vh);opacity:0;}}
 .wrap{max-width:1200px;margin:0 auto;padding:0 20px;position:relative;z-index:1;}
 
 /* NAV */
-nav{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:rgba(3,4,10,.85);backdrop-filter:blur(20px);border:1px solid rgba(245,200,66,.15);border-radius:18px;margin-bottom:0;}
+nav{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:rgba(2,11,24,.9);backdrop-filter:blur(20px);border:1px solid rgba(26,111,255,.25);border-radius:18px;margin-bottom:0;box-shadow:0 4px 32px rgba(26,111,255,.1);}
 .logo{display:flex;align-items:center;gap:12px;}
-.logo-coin{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f5c842,#92680a);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 30px rgba(245,200,66,.4);animation:pc 3s ease-in-out infinite;}
-@keyframes pc{0%,100%{box-shadow:0 0 30px rgba(245,200,66,.4);}50%{box-shadow:0 0 50px rgba(245,200,66,.65);}}
-.logo-name{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;letter-spacing:2px;}
+.logo-coin{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f5c842,#92680a);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 24px rgba(245,200,66,.4),0 0 48px rgba(26,111,255,.2);animation:pc 3s ease-in-out infinite;}
+@keyframes pc{0%,100%{box-shadow:0 0 24px rgba(245,200,66,.4),0 0 48px rgba(26,111,255,.15);}50%{box-shadow:0 0 40px rgba(245,200,66,.6),0 0 70px rgba(26,111,255,.25);}}
+.logo-name{font-family:'Orbitron',monospace;font-size:18px;font-weight:900;letter-spacing:2px;color:#e8f4ff;}
 .logo-name span{color:#f5c842;}
-.logo-tag{font-size:7px;color:#7a6840;letter-spacing:3px;text-transform:uppercase;}
+.logo-tag{font-size:7px;color:#4a7aaa;letter-spacing:3px;text-transform:uppercase;}
 .nav-r{display:flex;align-items:center;gap:20px;}
 .nav-stat{text-align:center;}
 .nv{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;color:#f5c842;}
-.nl{font-size:7px;color:#7a6840;text-transform:uppercase;letter-spacing:1px;}
+.nl{font-size:7px;color:#4a7aaa;text-transform:uppercase;letter-spacing:1px;}
 
 /* HERO */
 .hero{text-align:center;padding:65px 20px 55px;position:relative;}
@@ -414,16 +440,36 @@ function listenU(a){
   });
 }
 
+// قراءة البيانات من siteStats (محفوظة بواسطة الأدمن)
 function loadStats(){
-  db.ref('users').once('value',s=>{
-    const c=s.numChildren();let gt=0;
-    s.forEach(x=>{gt+=parseFloat(x.val().goldTon||0);});
-    ['st-m','nv-m'].forEach(id=>document.getElementById(id).innerText=c);
-    ['st-s','nv-s'].forEach(id=>document.getElementById(id).innerText=gt.toFixed(0));
+  db.ref('siteStats').once('value',s=>{
+    if(s.exists()){
+      const d=s.val();
+      const members = d.members||0;
+      const gt      = d.totalGoldTon||0;
+      ['st-m','nv-m'].forEach(id=>document.getElementById(id).innerText=members);
+      ['st-s','nv-s'].forEach(id=>document.getElementById(id).innerText=parseFloat(gt).toFixed(0));
+    } else {
+      // fallback: احسب مباشرة لو لم يحفظ الأدمن بعد
+      db.ref('users').once('value',u=>{
+        const c=u.numChildren();let gt=0;
+        u.forEach(x=>{gt+=parseFloat(x.val().goldTon||0);});
+        ['st-m','nv-m'].forEach(id=>document.getElementById(id).innerText=c);
+        ['st-s','nv-s'].forEach(id=>document.getElementById(id).innerText=gt.toFixed(0));
+      });
+    }
   });
 }
+// مراقبة مباشرة (real-time) — يتحدث فور حفظ الأدمن
+db.ref('siteStats').on('value',s=>{
+  if(!s.exists())return;
+  const d=s.val();
+  ['st-m','nv-m'].forEach(id=>document.getElementById(id).innerText=d.members||0);
+  ['st-s','nv-s'].forEach(id=>document.getElementById(id).innerText=parseFloat(d.totalGoldTon||0).toFixed(0));
+});
 loadStats();
-setInterval(loadStats,30000);
+setInterval(loadStats,60000);
+
 
 function loadTeam(myId){
   db.ref('users').orderByChild('upline').equalTo(String(myId)).on('value',s=>{
@@ -462,10 +508,22 @@ function renderLvls(lvl,a){
   for(let i=1;i<PRICES.length;i++){
     const on=i<=lvl;const ge=PRICES[i]*RATE;const pr=(PRICES[i]*.5).toFixed(2);
     const d=document.createElement('div');d.className='lc'+(on?' on':'');
-    d.innerHTML=`<div class="ln">LEVEL ${i}</div><div class="lpt">${PRICES[i]} <small>TON</small></div><div class="lpg">${ge} <small>GT</small></div><div class="lpr">عائد: <span>${pr} TON</span></div>${on?'<div class="on-badge">✅ مفعّل</div>':`<div class="lbtns"><button class="bext" onclick="buyExt(${i},${PRICES[i]},'${a}')">💳 محفظة</button><button class="bint" onclick="buyInt(${i},${PRICES[i]},'${a}')">🔄 داخلي</button></div>`}`;
+    let btns='';
+    if(on){
+      btns='<div class="on-badge">✅ مفعّل</div>';
+    } else if(!a){
+      // لم يتصل بالمحفظة بعد
+      btns=`<button class="bext" style="opacity:.5;cursor:default;" onclick="toast('⚠️ وصّل محفظتك أولاً')">🔗 وصّل محفظتك</button>`;
+    } else {
+      btns=`<div class="lbtns"><button class="bext" onclick="buyExt(${i},${PRICES[i]},'${a}')">💳 محفظة</button><button class="bint" onclick="buyInt(${i},${PRICES[i]},'${a}')">🔄 داخلي</button></div>`;
+    }
+    d.innerHTML=`<div class="ln">LEVEL ${i}</div><div class="lpt">${PRICES[i]} <small>TON</small></div><div class="lpg">${ge} <small>GT</small></div><div class="lpr">عائد: <span>${pr} TON</span></div>${btns}`;
     g.appendChild(d);
   }
 }
+
+// ✅ ارسم المستويات فوراً عند تحميل الصفحة (بدون محفظة)
+renderLvls(0, '');
 
 // Buy GT
 function calcB(){const v=parseFloat(document.getElementById('bin').value)||0;document.getElementById('bout').innerText=(v*RATE).toFixed(0);}
@@ -479,6 +537,7 @@ function initBuy(){
   openM('m-buy');
 }
 async function confBuy(){
+  if(!addr)return toast('⚠️ وصّل محفظتك أولاً');
   closeM('m-buy');
   const t=parseFloat(document.getElementById('mb-ton').innerText);
   const g=t*RATE;
